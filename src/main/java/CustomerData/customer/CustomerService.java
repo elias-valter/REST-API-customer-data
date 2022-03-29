@@ -1,19 +1,26 @@
 package CustomerData.customer;
 
+import CustomerData.customer.exception.CustomerAlreadyExistingExceptions;
 import CustomerData.customer.exception.CustomerNotFoundException;
+import CustomerData.customer.exception.CustomerPasswordTooWeakException;
 import CustomerData.customer.exception.CustomerProMemberException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
-public record CustomerService(CustomerRepository customerRepository) {
+public class CustomerService {
+
+    private final CustomerRepository customerRepository;
 
     @Autowired
-    public CustomerService {
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
 
@@ -40,21 +47,6 @@ public record CustomerService(CustomerRepository customerRepository) {
         return customers;
     }
 
-    public List<Customer> sortByName(boolean b) {
-        //b true -> byLastName
-        //b false -> byFirstName
-        if (b)
-            return customerRepository.findAll()
-                    .stream()
-                    .sorted(Comparator.comparing(Customer::getLastName))
-                    .toList();
-
-        return customerRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Customer::getFirstName))
-                .toList();
-
-    }
 
     public Customer findByEmail(String email) throws CustomerNotFoundException {
         Customer customer = customerRepository.findAll()
@@ -117,5 +109,106 @@ public record CustomerService(CustomerRepository customerRepository) {
             throw new CustomerProMemberException(false);
 
         return customers;
+    }
+
+    public List<Customer> sortByDob(boolean b) {
+        //b true -> oldest first
+        //b false -> youngest first
+        if(b)
+        return customerRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Customer::getDateOfBirth).reversed())
+                .toList();
+
+        return customerRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Customer::getDateOfBirth))
+                .toList();
+    }
+
+    public Long getNumberOfCustomers() {
+        return customerRepository.findAll()
+                .stream()
+                .count();
+    }
+
+    public Long getNumberOfProMembers() {
+        return customerRepository.findAll()
+                .stream()
+                .filter(Customer::isProMember)
+                .count();
+    }
+
+    public Long getNumberOfNonProMembers() {
+        return customerRepository.findAll()
+                .stream()
+                .filter(customer -> !customer.isProMember())
+                .count();
+    }
+
+    public void deleteById(Long id) {
+        customerRepository.deleteById(id);
+    }
+
+    public void deleteByEmail(String email) throws CustomerNotFoundException {
+        Optional<Customer> customerOptional = customerRepository.findCustomerByEmail(email);
+        if (customerOptional.isPresent())
+            customerRepository.deleteById(customerOptional.get().getId());
+        else
+            throw new CustomerNotFoundException(email);
+    }
+
+    public void addNew(Customer customer) throws CustomerAlreadyExistingExceptions {
+        Optional<Customer> customerOptional = customerRepository.findCustomerByEmail(customer.getEmail());
+        if(customerOptional.isPresent())
+            throw new CustomerAlreadyExistingExceptions(customer.getEmail());
+        else
+            customerRepository.save(customer);
+    }
+
+    @Transactional
+    public void update(Long id,
+                       String firstName,
+                       String lastName,
+                       int age,
+                       Date dateOfBirth,
+                       String email,
+                       String password,
+                       boolean proMember) throws CustomerNotFoundException, CustomerAlreadyExistingExceptions, CustomerPasswordTooWeakException {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+
+        if(firstName != null && firstName.length() > 0 && !Objects.equals(customer.getFirstName(), firstName)) {
+            customer.setFirstName(firstName);
+        }
+        if(lastName != null && lastName.length() > 0 && !Objects.equals(customer.getLastName(), lastName)) {
+            customer.setLastName(lastName);
+        }
+        if(age > 0 && !Objects.equals(customer.getAge(), age)){
+            customer.setAge(age);
+        }
+        if(dateOfBirth != null && dateOfBirth.before(Date.from(Instant.from(LocalDateTime.now())))){
+            customer.setDateOfBirth(dateOfBirth);
+        }
+
+        if(email != null && email.length() > 0 && !Objects.equals(customer.getEmail(), email)) {
+            Optional<Customer> customerOptional = customerRepository.findCustomerByEmail(email);
+            if(customerOptional.isPresent()) {
+                throw new CustomerAlreadyExistingExceptions(email);
+            }
+            customer.setEmail(email);
+        }
+
+        if(password != null && !Objects.equals(customer.getPassword(), password)){
+            if(password.length() <  15){
+                throw new CustomerPasswordTooWeakException(password);
+            }
+            customer.setPassword(password);
+        }
+
+        if(!Objects.equals(customer.isProMember(), proMember)) {
+            customer.setProMember(proMember);
+        }
+
     }
 }
