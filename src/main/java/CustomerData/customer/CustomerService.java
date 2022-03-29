@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 public class CustomerService {
@@ -23,11 +23,9 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-
     public List<Customer> findAll() {
         return customerRepository.findAll();
     }
-
 
     public Customer findById(Long id) throws CustomerNotFoundException {
         return customerRepository.findById(id)
@@ -59,7 +57,6 @@ public class CustomerService {
             throw new CustomerNotFoundException(email);
 
         return customer;
-
     }
 
     public List<Customer> findByDob(Date dob) throws CustomerNotFoundException {
