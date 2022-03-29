@@ -1,6 +1,6 @@
 package CustomerData.customer;
 
-import CustomerData.customer.exception.CustomerAlreadyExistingExceptions;
+import CustomerData.customer.exception.CustomerAlreadyExistingException;
 import CustomerData.customer.exception.CustomerNotFoundException;
 import CustomerData.customer.exception.CustomerPasswordTooWeakException;
 import CustomerData.customer.exception.CustomerProMemberException;
@@ -155,10 +155,10 @@ public class CustomerService {
             throw new CustomerNotFoundException(email);
     }
 
-    public void addNew(Customer customer) throws CustomerAlreadyExistingExceptions {
+    public void addNew(Customer customer) throws CustomerAlreadyExistingException {
         Optional<Customer> customerOptional = customerRepository.findCustomerByEmail(customer.getEmail());
         if(customerOptional.isPresent())
-            throw new CustomerAlreadyExistingExceptions(customer.getEmail());
+            throw new CustomerAlreadyExistingException(customer.getEmail());
         else
             customerRepository.save(customer);
     }
@@ -171,7 +171,7 @@ public class CustomerService {
                        Date dateOfBirth,
                        String email,
                        String password,
-                       boolean proMember) throws CustomerNotFoundException, CustomerAlreadyExistingExceptions, CustomerPasswordTooWeakException {
+                       boolean proMember) throws CustomerNotFoundException, CustomerAlreadyExistingException, CustomerPasswordTooWeakException {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException(id));
 
@@ -191,7 +191,7 @@ public class CustomerService {
         if(email != null && email.length() > 0 && !Objects.equals(customer.getEmail(), email)) {
             Optional<Customer> customerOptional = customerRepository.findCustomerByEmail(email);
             if(customerOptional.isPresent()) {
-                throw new CustomerAlreadyExistingExceptions(email);
+                throw new CustomerAlreadyExistingException(email);
             }
             customer.setEmail(email);
         }

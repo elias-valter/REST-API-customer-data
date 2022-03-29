@@ -1,6 +1,6 @@
 package CustomerData.customer;
 
-import CustomerData.customer.exception.CustomerAlreadyExistingExceptions;
+import CustomerData.customer.exception.CustomerAlreadyExistingException;
 import CustomerData.customer.exception.CustomerNotFoundException;
 import CustomerData.customer.exception.CustomerPasswordTooWeakException;
 import CustomerData.customer.exception.CustomerProMemberException;
@@ -112,7 +112,7 @@ public class CustomerController {
     }
 
     @PostMapping("/post/add")
-    void registerNewCustomer(@RequestBody Customer customer) throws CustomerAlreadyExistingExceptions {
+    void registerNewCustomer(@RequestBody Customer customer) throws CustomerAlreadyExistingException {
         customerService.addNew(customer);
     }
 
@@ -124,7 +124,7 @@ public class CustomerController {
                           @RequestParam(required = false) Date dateOfBirth,
                           @RequestParam(required = false) String email,
                           @RequestParam(required = false) String password,
-                          @RequestParam(required = false) boolean proMember) throws CustomerAlreadyExistingExceptions,
+                          @RequestParam(required = false) boolean proMember) throws CustomerAlreadyExistingException,
             CustomerNotFoundException, CustomerPasswordTooWeakException {
         customerService.update(Id, firstName, lastName, age, dateOfBirth, email, password, proMember);
     }

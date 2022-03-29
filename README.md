@@ -1,1 +1,1 @@
-# customer-data-api
+#REST API to manage customer data
