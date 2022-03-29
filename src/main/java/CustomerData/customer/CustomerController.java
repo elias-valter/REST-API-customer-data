@@ -1,5 +1,7 @@
 package CustomerData.customer;
 
+import CustomerData.customer.exception.CustomerNotFoundException;
+import CustomerData.customer.exception.CustomerProMemberException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,40 +38,36 @@ public class CustomerController {
      */
     @GetMapping("get/all/")
     List<Customer> findAllCustomers(){
-        return CustomerService.findAll();
+        return customerService.findAll();
     }
 
     @GetMapping("get/byId/{id}/")
-    Customer findCustomerById(@PathVariable Long id){
-        return CustomerService.findById(id);
+    Customer findCustomerById(@PathVariable Long id) throws CustomerNotFoundException {
+        return customerService.findById(id);
     }
 
     @GetMapping("get/byName/")
     List<Customer> findByName(@RequestParam(required = false) String firstName,
-                              @RequestParam(required = false) String lastName){
+                              @RequestParam(required = false) String lastName) throws CustomerNotFoundException {
         return customerService.findByName(firstName, lastName);
     }
 
-    @GetMapping("get/sortByNameUp/")
-    List<Customer> sortByName(){
+    @GetMapping("get/sortByLastName/")
+    List<Customer> sortByLastName(){
         return customerService.sortByName(true);
     }
 
-    @GetMapping("get/sortByNameDown/")
-    List<Customer> sortByName(){
+    @GetMapping("get/sortByFirstName/")
+    List<Customer> sortByFirstName(){
         return customerService.sortByName(false);
     }
 
     @GetMapping("get/byEmail{email}/")
-    Customer findByEmail(@PathVariable String email){
-        return CustomerService.findByEmail(email);
+    Customer findByEmail(@PathVariable String email) throws CustomerNotFoundException {
+        return customerService.findByEmail(email);
     }
 
-    @GetMapping("get/byDob/{dob}/")
-    List<Customer> findByAge(@PathVariable Date dob){
-        return customerService.findByDob(dob);
-    }
-
+    /*
     @GetMapping("get/sortByDobOldest/")
     List<Customer> sortByDob(){
         return customerService.sortByDob(true);
@@ -79,24 +77,25 @@ public class CustomerController {
     List<Customer> sortByDob(){
         return customerService.sortByDob(false);
     }
+    */
 
     @GetMapping("get/byAge/{age}/")
-    List<Customer> findByAge(@PathVariable int age){
+    List<Customer> findByAge(@PathVariable int age) throws CustomerNotFoundException {
         return customerService.findByAge(age);
     }
 
     @GetMapping("get/findProMembers/")
-    List<Customer> findAllProMembers(){
+    List<Customer> findAllProMembers() throws CustomerProMemberException {
         return customerService.findAllProMembers();
     }
 
     @GetMapping("get/findNonProMembers/")
-    List<Customer> findAllNonProMembers(){
+    List<Customer> findAllNonProMembers() throws CustomerProMemberException {
         return customerService.findAllNonProMembers();
     }
 
     @GetMapping("get/findByDob/{dob}/")
-    List<Customer> findByDob(@PathVariable Date dob){
+    List<Customer> findByDob(@PathVariable Date dob) throws CustomerNotFoundException {
         return customerService.findByDob(dob);
     }
 
@@ -119,7 +118,7 @@ public class CustomerController {
      */
 
     @PostMapping("/post/add/")
-    public void registerNewCustomer(@RequestBody Customer customer){
+    void registerNewCustomer(@RequestBody Customer customer){
         customerService.addNew(customer);
     }
 
