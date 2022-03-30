@@ -1,13 +1,12 @@
 package CustomerData.customer;
 
 
+import CustomerData.order.Order;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -15,7 +14,9 @@ import java.util.Date;
 @Getter
 @Setter
 @EqualsAndHashCode
+@ToString
 public class Customer {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,5 +28,6 @@ public class Customer {
     private String email;
     private String password;
     private boolean isProMember;
-
+    @OneToMany
+    private List<Order> orders;
 }

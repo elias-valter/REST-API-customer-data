@@ -9,7 +9,7 @@ public class CustomerConfig {
 
 
     @Bean
-    CommandLineRunner commandLineRunner(CustomerRepository customerRepository){
+    CommandLineRunner customerCommandLineRunner(CustomerRepository customerRepository){
         return args -> customerRepository.saveAll(customerRepository.findAll());
     }
 
