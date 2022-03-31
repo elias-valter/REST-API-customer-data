@@ -9,7 +9,7 @@ public class CustomerNotFoundException extends Exception{
     }
 
     public CustomerNotFoundException(String firstName, String lastName){
-        super("No customer found with this first name: " + firstName + " and this last name: " + lastName);
+        super("No customer found with the follwing first name: " + firstName + " and the following name: " + lastName);
     }
 
     public CustomerNotFoundException(String email){
