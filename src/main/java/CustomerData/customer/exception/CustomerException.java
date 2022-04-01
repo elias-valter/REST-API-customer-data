@@ -12,5 +12,4 @@ public class CustomerException {
     private final String message;
     private final HttpStatus httpStatus;
     private final ZonedDateTime time;
-
 }

@@ -2,7 +2,7 @@ package CustomerData.customer.exception;
 
 import java.util.Date;
 
-public class CustomerNotFoundException extends Exception{
+public class CustomerNotFoundException extends RuntimeException{
 
     public CustomerNotFoundException(Long id){
         super("No customer found with following ID: " + id);

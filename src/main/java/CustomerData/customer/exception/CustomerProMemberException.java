@@ -1,6 +1,6 @@
 package CustomerData.customer.exception;
 
-public class CustomerProMemberException extends Exception {
+public class CustomerProMemberException extends RuntimeException {
 
     public CustomerProMemberException(boolean b){
         super(CustomerProMemberException.getMessage(b));
