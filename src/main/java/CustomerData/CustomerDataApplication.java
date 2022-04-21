@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		 * @since 28th March 2022
 		 */
 
-
 @SpringBootApplication
 public class CustomerDataApplication {
 
