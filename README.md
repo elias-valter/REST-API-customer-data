@@ -9,7 +9,7 @@
 3. run the main method
 
 ---
-## What this is API used for
+## What this API is used for
 As you can imagine, this is a REST API built with Spring boot to manage customer data. You can use this API to manage your customer data for your Online-Shop as an example
 
 ---
